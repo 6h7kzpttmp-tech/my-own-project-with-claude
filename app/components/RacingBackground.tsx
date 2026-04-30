@@ -107,6 +107,18 @@ export default function RacingBackground() {
             .tf1 { animation: toolFloat1 4.5s ease-in-out infinite; }
             .tf2 { animation: toolFloat2 5.5s ease-in-out infinite; animation-delay:-2s; }
             .tf3 { animation: toolFloat3 3.8s ease-in-out infinite; animation-delay:-1.5s; }
+
+            @keyframes carPassRL {
+              from { transform: translateX(1650px); }
+              to   { transform: translateX(-420px); }
+            }
+            @keyframes carPassLR {
+              from { transform: translateX(-420px); }
+              to   { transform: translateX(1650px); }
+            }
+            .pass-rl-1 { animation: carPassRL 11s linear infinite; }
+            .pass-rl-2 { animation: carPassRL 18s linear infinite; animation-delay:-8s; }
+            .pass-lr-1 { animation: carPassLR 14s linear infinite; animation-delay:-5s; }
           `}</style>
         </defs>
 
@@ -404,6 +416,89 @@ export default function RacingBackground() {
           <rect x="16"  y="-20" width="22" height="4"  rx="2" fill="#475569" />
           <rect x="36"  y="-26" width="4"  height="14" rx="2" fill="#475569" />
           <rect x="-12" y="-28" width="28" height="6"  rx="4" fill="#4a6080" />
+        </g>
+
+        {/* ══════════════════════════════════════
+            PASSING CARS ANIMATION
+        ══════════════════════════════════════ */}
+
+        {/* ── RL Car 1 (fast, closer / larger) ── */}
+        <g transform="translate(0,718)">
+          <g className="pass-rl-1">
+            <g transform="scale(0.92)">
+              {/* headlight beam */}
+              <polygon points="4,25 4,44 -230,72 -260,58" fill="#fef3c7" opacity="0.05"/>
+              {/* ground shadow */}
+              <ellipse cx="88" cy="70" rx="86" ry="7" fill="#000" opacity="0.22"/>
+              {/* body */}
+              <path d="M4,58 L4,36 Q8,20 28,12 L52,6 L72,0 L132,0 L146,8 L162,24 L170,42 L172,58 Z" fill="#1e3045"/>
+              {/* cabin */}
+              <path d="M54,6 L72,0 L132,0 L144,10 L120,12 L80,12 Z" fill="#1c3a5a"/>
+              {/* window shine */}
+              <path d="M57,6 L72,0 L96,0 L89,9 Z" fill="#fff" opacity="0.07"/>
+              {/* wheels */}
+              <circle cx="34"  cy="58" r="18" fill="#0a1017"/><circle cx="34"  cy="58" r="10" fill="#162233"/><circle cx="34"  cy="58" r="3.5" fill="#1e3045"/>
+              <circle cx="146" cy="58" r="18" fill="#0a1017"/><circle cx="146" cy="58" r="10" fill="#162233"/><circle cx="146" cy="58" r="3.5" fill="#1e3045"/>
+              {/* headlights */}
+              <rect x="2" y="24" width="6" height="10" rx="2" fill="#fef3c7" filter="url(#glow)"/>
+              {/* taillights */}
+              <rect x="166" y="26" width="8" height="10" rx="2" fill="#ef4444" filter="url(#glow)"/>
+              {/* brake light glow */}
+              <rect x="163" y="24" width="12" height="14" rx="3" fill="#ef4444" opacity="0.12"/>
+            </g>
+          </g>
+        </g>
+
+        {/* ── RL Car 2 (slow, smaller / more distant) ── */}
+        <g transform="translate(0,740)">
+          <g className="pass-rl-2">
+            <g transform="scale(0.68)">
+              {/* headlight beam */}
+              <polygon points="4,25 4,44 -230,72 -260,58" fill="#fef3c7" opacity="0.04"/>
+              {/* ground shadow */}
+              <ellipse cx="88" cy="70" rx="86" ry="7" fill="#000" opacity="0.18"/>
+              {/* body (slightly different shade) */}
+              <path d="M4,58 L4,36 Q8,20 28,12 L52,6 L72,0 L132,0 L146,8 L162,24 L170,42 L172,58 Z" fill="#162535"/>
+              {/* cabin */}
+              <path d="M54,6 L72,0 L132,0 L144,10 L120,12 L80,12 Z" fill="#1a3050"/>
+              {/* window shine */}
+              <path d="M57,6 L72,0 L96,0 L89,9 Z" fill="#fff" opacity="0.06"/>
+              {/* wheels */}
+              <circle cx="34"  cy="58" r="18" fill="#0a1017"/><circle cx="34"  cy="58" r="10" fill="#162233"/><circle cx="34"  cy="58" r="3.5" fill="#162535"/>
+              <circle cx="146" cy="58" r="18" fill="#0a1017"/><circle cx="146" cy="58" r="10" fill="#162233"/><circle cx="146" cy="58" r="3.5" fill="#162535"/>
+              {/* headlights */}
+              <rect x="2" y="24" width="6" height="10" rx="2" fill="#fef3c7" filter="url(#glow)"/>
+              {/* taillights */}
+              <rect x="166" y="26" width="8" height="10" rx="2" fill="#ef4444" filter="url(#glow)"/>
+            </g>
+          </g>
+        </g>
+
+        {/* ── LR Car 1 (opposite direction, mid-size) ── */}
+        <g transform="translate(0,728)">
+          <g className="pass-lr-1">
+            <g transform="scale(0.78)">
+              {/* headlight beam (extends RIGHT) */}
+              <polygon points="176,25 176,44 410,72 440,58" fill="#fef3c7" opacity="0.045"/>
+              {/* ground shadow */}
+              <ellipse cx="90" cy="70" rx="86" ry="7" fill="#000" opacity="0.2"/>
+              {/* body (LR — front=right) */}
+              <path d="M176,58 L176,36 Q172,20 152,12 L128,6 L108,0 L48,0 L34,8 L18,24 L10,42 L8,58 Z" fill="#1a1e3a"/>
+              {/* cabin */}
+              <path d="M126,6 L108,0 L48,0 L36,10 L60,12 L100,12 Z" fill="#1e2250"/>
+              {/* window shine */}
+              <path d="M123,6 L108,0 L84,0 L91,9 Z" fill="#fff" opacity="0.07"/>
+              {/* wheels */}
+              <circle cx="146" cy="58" r="18" fill="#0a1017"/><circle cx="146" cy="58" r="10" fill="#162233"/><circle cx="146" cy="58" r="3.5" fill="#1a1e3a"/>
+              <circle cx="34"  cy="58" r="18" fill="#0a1017"/><circle cx="34"  cy="58" r="10" fill="#162233"/><circle cx="34"  cy="58" r="3.5" fill="#1a1e3a"/>
+              {/* headlights (right side = front) */}
+              <rect x="172" y="24" width="6" height="10" rx="2" fill="#fef3c7" filter="url(#glow)"/>
+              {/* taillights (left side = rear) */}
+              <rect x="6" y="26" width="8" height="10" rx="2" fill="#ef4444" filter="url(#glow)"/>
+              {/* brake light glow */}
+              <rect x="4" y="24" width="12" height="14" rx="3" fill="#ef4444" opacity="0.1"/>
+            </g>
+          </g>
         </g>
       </svg>
     </div>
