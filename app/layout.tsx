@@ -21,8 +21,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "내 차 유지비 계산기",
-  description: "차종·연비·주행거리를 입력하면 월간/연간 유지비를 계산해드립니다",
+  title: "PitStop",
+  description: "차량 유지비 계산, 소모품 교환시기, 정비소 검색을 한 번에",
 };
 
 export default function RootLayout({

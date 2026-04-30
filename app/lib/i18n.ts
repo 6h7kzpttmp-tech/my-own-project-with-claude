@@ -31,7 +31,7 @@ export function toKOUnits(
 
 // ── 번역 사전 ───────────────────────────────────────────────────────────────────
 const ko = {
-  title: '내 차 관리 계산기',
+  title: 'PitStop',
   subtitle: '유지비 계산과 소모품 교환시기를 확인하세요',
   tabCost: '💰 유지비 계산',
   tabConsumables: '🔩 소모품 교환시기',
@@ -80,7 +80,7 @@ const ko = {
 }
 
 const en: typeof ko = {
-  title: 'My Car Manager',
+  title: 'PitStop',
   subtitle: 'Calculate costs & track maintenance intervals',
   tabCost: '💰 Cost Calculator',
   tabConsumables: '🔩 Maintenance',
