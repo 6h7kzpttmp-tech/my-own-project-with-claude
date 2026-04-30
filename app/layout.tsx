@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
+import { Geist, Geist_Mono, Space_Grotesk, Merriweather, Public_Sans } from "next/font/google";
 import "./globals.css";
 import RacingBackground from "./components/RacingBackground";
 import { cn } from "@/lib/utils";
+
+const publicSansHeading = Public_Sans({subsets:['latin'],variable:'--font-heading'});
+
+const merriweather = Merriweather({subsets:['latin'],variable:'--font-serif'});
 
 const spaceGrotesk = Space_Grotesk({subsets:['latin'],variable:'--font-sans'});
 
@@ -29,7 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", spaceGrotesk.variable)}
+      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, spaceGrotesk.variable, "font-serif", merriweather.variable, publicSansHeading.variable)}
     >
       <body className="min-h-full flex flex-col">
         <RacingBackground />
