@@ -95,30 +95,30 @@ describe('formatKRW()', () => {
 describe('validate()', () => {
   test('S4a: 주행거리 빈값 → distance 오류', () => {
     const e = validate('', '12')
-    expect(e.distance).toBe('필수 입력값입니다')
+    expect(e.distance).toBe('required')
     expect(e.efficiency).toBeUndefined()
   })
 
   test('S4b: 연비 빈값 → efficiency 오류', () => {
     const e = validate('1500', '')
     expect(e.distance).toBeUndefined()
-    expect(e.efficiency).toBe('필수 입력값입니다')
+    expect(e.efficiency).toBe('required')
   })
 
   test('S4c: 둘 다 빈값 → 두 오류 모두', () => {
     const e = validate('', '')
-    expect(e.distance).toBe('필수 입력값입니다')
-    expect(e.efficiency).toBe('필수 입력값입니다')
+    expect(e.distance).toBe('required')
+    expect(e.efficiency).toBe('required')
   })
 
-  test('S5: 연비 0 → "1 이상의 값을 입력해주세요"', () => {
+  test('S5: 연비 0 → "minOne"', () => {
     const e = validate('1500', '0')
-    expect(e.efficiency).toBe('1 이상의 값을 입력해주세요')
+    expect(e.efficiency).toBe('minOne')
   })
 
-  test('연비 음수 → "1 이상의 값을 입력해주세요"', () => {
+  test('연비 음수 → "minOne"', () => {
     const e = validate('1500', '-5')
-    expect(e.efficiency).toBe('1 이상의 값을 입력해주세요')
+    expect(e.efficiency).toBe('minOne')
   })
 
   test('정상 입력 → 오류 없음', () => {
@@ -128,6 +128,6 @@ describe('validate()', () => {
 
   test('공백만 입력 → 필수 오류', () => {
     const e = validate('   ', '12')
-    expect(e.distance).toBe('필수 입력값입니다')
+    expect(e.distance).toBe('required')
   })
 })

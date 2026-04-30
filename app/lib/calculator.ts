@@ -57,20 +57,17 @@ export function formatKRW(amount: number): string {
 export const CAR_TYPES: CarType[] = ['경차', '소형', '중형', 'SUV', '대형']
 export const FUEL_TYPES: FuelType[] = ['휘발유', '경유', '전기']
 
+export type ValidationErrorKey = 'required' | 'minOne'
+
 export interface ValidationErrors {
-  distance?: string
-  efficiency?: string
+  distance?: ValidationErrorKey
+  efficiency?: ValidationErrorKey
 }
 
 export function validate(distance: string, efficiency: string): ValidationErrors {
   const errors: ValidationErrors = {}
-  if (!distance.trim()) {
-    errors.distance = '필수 입력값입니다'
-  }
-  if (!efficiency.trim()) {
-    errors.efficiency = '필수 입력값입니다'
-  } else if (Number(efficiency) <= 0) {
-    errors.efficiency = '1 이상의 값을 입력해주세요'
-  }
+  if (!distance.trim()) errors.distance = 'required'
+  if (!efficiency.trim()) errors.efficiency = 'required'
+  else if (Number(efficiency) <= 0) errors.efficiency = 'minOne'
   return errors
 }

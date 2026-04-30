@@ -1,19 +1,20 @@
 export interface Consumable {
   id: string
   name: string
+  nameEn: string
   interval: number // km
   icon: string
-  note: string // 교환 기준 안내
+  note: string
 }
 
 export const CONSUMABLES: Consumable[] = [
-  { id: 'engine_oil',   name: '엔진오일',      interval: 10000, icon: '🔧', note: '일반적 기준 10,000km' },
-  { id: 'mission_oil',  name: '미션오일',      interval: 50000, icon: '⚙️', note: '일반적 기준 50,000km' },
-  { id: 'brake_fluid',  name: '브레이크 오일', interval: 40000, icon: '🛑', note: '일반적 기준 40,000km' },
-  { id: 'coolant',      name: '냉각수',        interval: 40000, icon: '💧', note: '일반적 기준 40,000km' },
-  { id: 'air_filter',   name: '에어 필터',     interval: 20000, icon: '💨', note: '일반적 기준 20,000km' },
-  { id: 'spark_plug',   name: '점화 플러그',   interval: 30000, icon: '⚡', note: '일반적 기준 30,000km' },
-  { id: 'brake_pad',    name: '브레이크 패드', interval: 40000, icon: '🔴', note: '일반적 기준 40,000km' },
+  { id: 'engine_oil',   name: '엔진오일',      nameEn: 'Engine Oil',     interval: 10000, icon: '🔧', note: '일반적 기준 10,000km' },
+  { id: 'mission_oil',  name: '미션오일',      nameEn: 'Transmission Oil',interval: 50000, icon: '⚙️', note: '일반적 기준 50,000km' },
+  { id: 'brake_fluid',  name: '브레이크 오일', nameEn: 'Brake Fluid',    interval: 40000, icon: '🛑', note: '일반적 기준 40,000km' },
+  { id: 'coolant',      name: '냉각수',        nameEn: 'Coolant',        interval: 40000, icon: '💧', note: '일반적 기준 40,000km' },
+  { id: 'air_filter',   name: '에어 필터',     nameEn: 'Air Filter',     interval: 20000, icon: '💨', note: '일반적 기준 20,000km' },
+  { id: 'spark_plug',   name: '점화 플러그',   nameEn: 'Spark Plug',     interval: 30000, icon: '⚡', note: '일반적 기준 30,000km' },
+  { id: 'brake_pad',    name: '브레이크 패드', nameEn: 'Brake Pad',      interval: 40000, icon: '🔴', note: '일반적 기준 40,000km' },
 ]
 
 export type ConsumableStatus = 'ok' | 'soon' | 'overdue' | 'unknown'

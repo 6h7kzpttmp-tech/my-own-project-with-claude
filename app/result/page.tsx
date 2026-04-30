@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { calculate, formatKRW, type CarType, type FuelType } from '../lib/calculator'
+import { calculate, type CarType, type FuelType } from '../lib/calculator'
+import { translations, formatAmount, type Lang } from '../lib/i18n'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -16,53 +17,84 @@ export default async function ResultPage({ searchParams }: Props) {
   const efficiency = Number(params.efficiency || '1')
   const fuelType = (params.fuelType as FuelType) || '휘발유'
   const insurance = Number(params.insurance || '0')
+  const lang = (params.lang as Lang) || 'ko'
 
+  const t = translations[lang]
   const result = calculate({ carType, distance, efficiency, fuelType, insurance })
+  const fmt = (n: number) => formatAmount(n, lang)
 
   const backParams = new URLSearchParams({
-    carType,
-    distance: String(distance),
-    efficiency: String(efficiency),
-    fuelType,
-    insurance: String(insurance),
+    carType, distance: String(distance), efficiency: String(efficiency),
+    fuelType, insurance: String(insurance), lang,
   })
+
+  // lang 토글 URL (결과 페이지에서 언어 전환 시 모든 params 유지)
+  const toggleLangParams = new URLSearchParams({ ...Object.fromEntries(backParams), lang: lang === 'ko' ? 'en' : 'ko' })
+
+  const fuelPriceText =
+    fuelType === '휘발유' ? t.fuelPriceGasoline :
+    fuelType === '경유'   ? t.fuelPriceDiesel   : t.fuelPriceElectric
+
+  const effUnit = fuelType === '전기' ? 'km/kWh' : 'km/L'
+  const carTypeName = t.carTypeNames[carType]
+  const fuelTypeName = t.fuelTypeNames[fuelType]
 
   const breakdownItems = [
     {
-      label: '주유비',
+      label: t.fuelCostLabel,
       icon: '⛽',
       value: result.fuelCost,
-      description: `${distance}km ÷ ${efficiency}${fuelType === '전기' ? 'km/kWh' : 'km/L'} × ${fuelType === '휘발유' ? '1,650원/L' : fuelType === '경유' ? '1,500원/L' : '50원/kWh'}`,
+      description: `${distance}km ÷ ${efficiency}${effUnit} × ${fuelPriceText}`,
     },
     {
-      label: '보험료',
+      label: t.insuranceLabel,
       icon: '🛡️',
       value: result.insurance,
-      description: '입력하신 월 보험료',
+      description: t.insuranceDesc,
     },
     {
-      label: '정기점검비',
+      label: t.maintenanceLabel,
       icon: '🔧',
       value: result.maintenance,
-      description: `${carType} 기준 추정값`,
+      description: `${carTypeName} ${t.maintenanceDescSuffix}`,
     },
   ]
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md rounded-2xl ring-0 shadow-2xl bg-card/95 backdrop-blur-sm">
-        <CardHeader className="text-center pb-2">
+        <CardHeader className="text-center pb-2 relative">
+          {/* 언어 스위치 */}
+          <Link
+            href={`/result?${toggleLangParams.toString()}`}
+            className="absolute top-4 right-4 flex items-center gap-0.5 rounded-lg border border-border p-0.5 bg-muted/40"
+          >
+            {(['ko', 'en'] as Lang[]).map((l) => (
+              <span
+                key={l}
+                className={`px-2 py-0.5 rounded-md text-xs font-semibold transition-colors ${
+                  lang === l
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground'
+                }`}
+              >
+                {l.toUpperCase()}
+              </span>
+            ))}
+          </Link>
           <div className="text-4xl mb-1">📊</div>
-          <CardTitle className="text-xl font-bold">유지비 계산 결과</CardTitle>
-          <CardDescription>{carType} · {fuelType}</CardDescription>
+          <CardTitle className="text-xl font-bold">{t.resultTitle}</CardTitle>
+          <CardDescription>{carTypeName} · {fuelTypeName}</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4 pt-2">
-          {/* 월간 합계 강조 */}
+          {/* 월간 합계 */}
           <div className="bg-primary rounded-xl p-6 text-center">
-            <p className="text-primary-foreground/70 text-sm mb-1">월간 유지비 합계</p>
-            <p className="text-primary-foreground text-4xl font-bold">{formatKRW(result.monthlyTotal)}</p>
-            <p className="text-primary-foreground/70 text-sm mt-2">연간 {formatKRW(result.annualTotal)}</p>
+            <p className="text-primary-foreground/70 text-sm mb-1">{t.monthlyTotal}</p>
+            <p className="text-primary-foreground text-4xl font-bold">{fmt(result.monthlyTotal)}</p>
+            <p className="text-primary-foreground/70 text-sm mt-2">
+              {t.annualPrefix} {fmt(result.annualTotal)}
+            </p>
           </div>
 
           {/* 항목별 breakdown */}
@@ -76,7 +108,7 @@ export default async function ResultPage({ searchParams }: Props) {
                     <p className="text-xs text-muted-foreground">{item.description}</p>
                   </div>
                 </div>
-                <p className="text-sm font-semibold text-foreground">{formatKRW(item.value)}</p>
+                <p className="text-sm font-semibold text-foreground">{fmt(item.value)}</p>
               </div>
             ))}
           </div>
@@ -86,12 +118,12 @@ export default async function ResultPage({ searchParams }: Props) {
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <span className="text-lg">📅</span>
-                <span className="text-sm font-medium text-foreground">연간 유지비</span>
+                <span className="text-sm font-medium text-foreground">{t.annualLabel}</span>
               </div>
-              <span className="text-sm font-bold text-primary">{formatKRW(result.annualTotal)}</span>
+              <span className="text-sm font-bold text-primary">{fmt(result.annualTotal)}</span>
             </div>
             <p className="text-xs text-muted-foreground mt-1 ml-7">
-              월 {formatKRW(result.monthlyTotal)} × 12개월
+              {fmt(result.monthlyTotal)} × {t.months}
             </p>
           </div>
 
@@ -100,7 +132,7 @@ export default async function ResultPage({ searchParams }: Props) {
             href={`/?${backParams.toString()}`}
             className={cn(buttonVariants({ variant: 'outline' }), 'w-full h-11 text-sm justify-center')}
           >
-            다시 계산하기
+            {t.recalculate}
           </Link>
         </CardContent>
       </Card>
