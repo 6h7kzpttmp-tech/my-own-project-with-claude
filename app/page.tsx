@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
-import { CAR_TYPES, FUEL_TYPES, type CarType, type FuelType } from './lib/calculator'
+import { CAR_TYPES, FUEL_TYPES, validate, type CarType, type FuelType, type ValidationErrors } from './lib/calculator'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -17,10 +17,7 @@ interface FormValues {
   insurance: string
 }
 
-interface Errors {
-  distance?: string
-  efficiency?: string
-}
+type Errors = ValidationErrors
 
 function InputForm() {
   const router = useRouter()
@@ -35,21 +32,15 @@ function InputForm() {
   })
   const [errors, setErrors] = useState<Errors>({})
 
-  function validate(): boolean {
-    const next: Errors = {}
-    if (!values.distance.trim()) next.distance = '필수 입력값입니다'
-    if (!values.efficiency.trim()) {
-      next.efficiency = '필수 입력값입니다'
-    } else if (Number(values.efficiency) <= 0) {
-      next.efficiency = '1 이상의 값을 입력해주세요'
-    }
+  function runValidate(): boolean {
+    const next = validate(values.distance, values.efficiency)
     setErrors(next)
     return Object.keys(next).length === 0
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!validate()) return
+    if (!runValidate()) return
     const params = new URLSearchParams({
       carType: values.carType,
       distance: values.distance,
