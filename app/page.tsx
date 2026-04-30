@@ -196,25 +196,38 @@ const STATUS_CONFIG = {
 
 function ConsumablesForm({ lang }: { lang: Lang }) {
   const t = translations[lang]
-  const [currentKm, setCurrentKm] = useState('')
-  const [lastKmMap, setLastKmMap] = useState<Record<string, string>>(() =>
+  const KM_PER_MILE = 1.60934
+  const isEn = lang === 'en'
+
+  const [currentVal, setCurrentVal] = useState('')
+  const [lastValMap, setLastValMap] = useState<Record<string, string>>(() =>
     Object.fromEntries(CONSUMABLES.map((c) => [c.id, '']))
   )
 
-  const parsedCurrent = currentKm !== '' && !isNaN(Number(currentKm)) && Number(currentKm) >= 0
-    ? Number(currentKm)
-    : null
+  // 입력값(km 또는 mi)을 내부 km으로 변환
+  const toKm = (val: string) => {
+    const n = Number(val)
+    if (val === '' || isNaN(n) || n < 0) return null
+    return isEn ? n * KM_PER_MILE : n
+  }
 
-  function parsedLast(id: string): number | null {
-    const val = lastKmMap[id]
-    if (val === '' || isNaN(Number(val)) || Number(val) < 0) return null
-    if (parsedCurrent !== null && Number(val) > parsedCurrent) return null
-    return Number(val)
+  const parsedCurrentKm = toKm(currentVal)
+
+  function parsedLastKm(id: string): number | null {
+    const km = toKm(lastValMap[id])
+    if (km === null) return null
+    if (parsedCurrentKm !== null && km > parsedCurrentKm) return null
+    return km
   }
 
   const statusLabels = {
     ok: t.statusOk, soon: t.statusSoon, overdue: t.statusOverdue, unknown: t.statusUnknown,
   }
+
+  const distUnit = isEn ? 'mi' : 'km'
+  const distStep = isEn ? '100' : '1000'
+  const currentPlaceholder = isEn ? 'e.g. 28,000' : '예: 45000'
+  const lastPlaceholder = isEn ? t.lastKm + ' (mi)' : t.lastKm
 
   return (
     <div className="space-y-4">
@@ -224,14 +237,14 @@ function ConsumablesForm({ lang }: { lang: Lang }) {
           <Input
             id="currentKm"
             type="number"
-            value={currentKm}
-            onChange={(e) => setCurrentKm(e.target.value)}
-            placeholder={lang === 'en' ? 'e.g. 45000' : '예: 45000'}
+            value={currentVal}
+            onChange={(e) => setCurrentVal(e.target.value)}
+            placeholder={currentPlaceholder}
             min="0"
-            step="1000"
+            step={distStep}
             className="h-10 pr-12 text-sm"
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">km</span>
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">{distUnit}</span>
         </div>
       </div>
 
@@ -239,11 +252,11 @@ function ConsumablesForm({ lang }: { lang: Lang }) {
 
       <div className="space-y-3">
         {CONSUMABLES.map((c) => {
-          const last = parsedLast(c.id)
-          const status = getStatus(parsedCurrent, last, c.interval)
+          const lastKm = parsedLastKm(c.id)
+          const status = getStatus(parsedCurrentKm, lastKm, c.interval)
           const cfg = STATUS_CONFIG[status]
-          const remaining = parsedCurrent !== null && last !== null
-            ? getRemainingKm(parsedCurrent, last, c.interval)
+          const remainingKm = parsedCurrentKm !== null && lastKm !== null
+            ? getRemainingKm(parsedCurrentKm, lastKm, c.interval)
             : null
 
           return (
@@ -251,11 +264,11 @@ function ConsumablesForm({ lang }: { lang: Lang }) {
               <div className="flex items-center justify-between gap-2">
                 <span className="text-sm font-medium flex items-center gap-1.5">
                   <span>{c.icon}</span>
-                  {lang === 'en' && c.nameEn ? c.nameEn : c.name}
+                  {isEn ? c.nameEn : c.name}
                 </span>
                 <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${cfg.className}`}>
                   {statusLabels[status]}
-                  {remaining !== null && ` · ${formatRemaining(remaining)}`}
+                  {remainingKm !== null && ` · ${formatRemaining(remainingKm, lang)}`}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -263,16 +276,18 @@ function ConsumablesForm({ lang }: { lang: Lang }) {
                   <Input
                     id={`last-${c.id}`}
                     type="number"
-                    value={lastKmMap[c.id]}
-                    onChange={(e) => setLastKmMap((m) => ({ ...m, [c.id]: e.target.value }))}
-                    placeholder={t.lastKm}
+                    value={lastValMap[c.id]}
+                    onChange={(e) => setLastValMap((m) => ({ ...m, [c.id]: e.target.value }))}
+                    placeholder={lastPlaceholder}
                     min="0"
-                    step="1000"
+                    step={distStep}
                     className="h-9 pr-12 text-sm"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">km</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">{distUnit}</span>
                 </div>
-                <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">{c.note}</span>
+                <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">
+                  {isEn ? c.noteEn : c.note}
+                </span>
               </div>
             </div>
           )
