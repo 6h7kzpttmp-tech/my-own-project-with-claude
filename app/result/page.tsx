@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { calculate, type CarType, type FuelType } from '../lib/calculator'
-import { translations, formatAmount, type Lang } from '../lib/i18n'
+import { translations, formatAmount, toKOUnits, type Lang } from '../lib/i18n'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -12,31 +12,45 @@ interface Props {
 export default async function ResultPage({ searchParams }: Props) {
   const params = await searchParams
 
-  const carType = (params.carType as CarType) || '중형'
-  const distance = Number(params.distance || '0')
-  const efficiency = Number(params.efficiency || '1')
-  const fuelType = (params.fuelType as FuelType) || '휘발유'
-  const insurance = Number(params.insurance || '0')
-  const lang = (params.lang as Lang) || 'ko'
+  const carType   = (params.carType as CarType)   || '중형'
+  const fuelType  = (params.fuelType as FuelType)  || '휘발유'
+  const lang      = (params.lang as Lang)          || 'ko'
+  const t         = translations[lang]
 
-  const t = translations[lang]
-  const result = calculate({ carType, distance, efficiency, fuelType, insurance })
+  // URL에 저장된 값 (KO: km/km·L/₩, EN: mi/mpg/$)
+  const rawDistance   = Number(params.distance   || '0')
+  const rawEfficiency = Number(params.efficiency || '1')
+  const rawInsurance  = Number(params.insurance  || '0')
+
+  // 내부 계산은 항상 km/L/₩ 기준
+  const { distanceKm, efficiencyKmL, insuranceKRW } = lang === 'en'
+    ? toKOUnits(rawDistance, rawEfficiency, fuelType, rawInsurance)
+    : { distanceKm: rawDistance, efficiencyKmL: rawEfficiency, insuranceKRW: rawInsurance }
+
+  const result = calculate({
+    carType, distance: distanceKm, efficiency: efficiencyKmL,
+    fuelType, insurance: insuranceKRW,
+  })
+
   const fmt = (n: number) => formatAmount(n, lang)
 
   const backParams = new URLSearchParams({
-    carType, distance: String(distance), efficiency: String(efficiency),
-    fuelType, insurance: String(insurance), lang,
+    carType, distance: String(rawDistance), efficiency: String(rawEfficiency),
+    fuelType, insurance: String(rawInsurance), lang,
   })
 
-  // lang 토글 URL (결과 페이지에서 언어 전환 시 모든 params 유지)
-  const toggleLangParams = new URLSearchParams({ ...Object.fromEntries(backParams), lang: lang === 'ko' ? 'en' : 'ko' })
+  const toggleLangParams = new URLSearchParams({
+    ...Object.fromEntries(backParams),
+    lang: lang === 'ko' ? 'en' : 'ko',
+  })
 
-  const fuelPriceText =
+  // 연료 설명 (EN: mi/mpg/$, KO: km/km·L/원)
+  const effUnit      = t.efficiencyUnit(fuelType)
+  const fuelPriceStr =
     fuelType === '휘발유' ? t.fuelPriceGasoline :
     fuelType === '경유'   ? t.fuelPriceDiesel   : t.fuelPriceElectric
 
-  const effUnit = fuelType === '전기' ? 'km/kWh' : 'km/L'
-  const carTypeName = t.carTypeNames[carType]
+  const carTypeName  = t.carTypeNames[carType]
   const fuelTypeName = t.fuelTypeNames[fuelType]
 
   const breakdownItems = [
@@ -44,7 +58,7 @@ export default async function ResultPage({ searchParams }: Props) {
       label: t.fuelCostLabel,
       icon: '⛽',
       value: result.fuelCost,
-      description: `${distance}km ÷ ${efficiency}${effUnit} × ${fuelPriceText}`,
+      description: `${rawDistance}${t.distanceUnit} ÷ ${rawEfficiency}${effUnit} × ${fuelPriceStr}`,
     },
     {
       label: t.insuranceLabel,
@@ -64,7 +78,6 @@ export default async function ResultPage({ searchParams }: Props) {
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md rounded-2xl ring-0 shadow-2xl bg-card/95 backdrop-blur-sm">
         <CardHeader className="text-center pb-2 relative">
-          {/* 언어 스위치 */}
           <Link
             href={`/result?${toggleLangParams.toString()}`}
             className="absolute top-4 right-4 flex items-center gap-0.5 rounded-lg border border-border p-0.5 bg-muted/40"
@@ -73,9 +86,7 @@ export default async function ResultPage({ searchParams }: Props) {
               <span
                 key={l}
                 className={`px-2 py-0.5 rounded-md text-xs font-semibold transition-colors ${
-                  lang === l
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground'
+                  lang === l ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
                 }`}
               >
                 {l.toUpperCase()}
@@ -88,7 +99,6 @@ export default async function ResultPage({ searchParams }: Props) {
         </CardHeader>
 
         <CardContent className="space-y-4 pt-2">
-          {/* 월간 합계 */}
           <div className="bg-primary rounded-xl p-6 text-center">
             <p className="text-primary-foreground/70 text-sm mb-1">{t.monthlyTotal}</p>
             <p className="text-primary-foreground text-4xl font-bold">{fmt(result.monthlyTotal)}</p>
@@ -97,7 +107,6 @@ export default async function ResultPage({ searchParams }: Props) {
             </p>
           </div>
 
-          {/* 항목별 breakdown */}
           <div className="space-y-2">
             {breakdownItems.map((item) => (
               <div key={item.label} className="flex items-center justify-between rounded-lg bg-muted p-3">
@@ -113,7 +122,6 @@ export default async function ResultPage({ searchParams }: Props) {
             ))}
           </div>
 
-          {/* 연간 환산 */}
           <div className="rounded-lg bg-primary/10 border border-primary/20 p-3">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
@@ -127,7 +135,6 @@ export default async function ResultPage({ searchParams }: Props) {
             </p>
           </div>
 
-          {/* 다시 계산하기 */}
           <Link
             href={`/?${backParams.toString()}`}
             className={cn(buttonVariants({ variant: 'outline' }), 'w-full h-11 text-sm justify-center')}

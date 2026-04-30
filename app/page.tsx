@@ -75,7 +75,7 @@ function MaintenanceCostForm({ lang }: { lang: Lang }) {
     router.push(`/result?${params.toString()}`)
   }
 
-  const efficiencyUnit = values.fuelType === '전기' ? 'km/kWh' : 'km/L'
+  const efficiencyUnit = t.efficiencyUnit(values.fuelType)
   const errMsg = (key: Errors['distance']) =>
     key ? (key === 'required' ? t.errRequired : t.errMinOne) : undefined
 
@@ -126,13 +126,13 @@ function MaintenanceCostForm({ lang }: { lang: Lang }) {
               setValues((v) => ({ ...v, distance: e.target.value }))
               if (errors.distance) setErrors((er) => ({ ...er, distance: undefined }))
             }}
-            placeholder={lang === 'en' ? 'e.g. 1500' : '예: 1500'}
+            placeholder={t.distancePlaceholder}
             min="0"
-            step="100"
+            step={t.distanceStep}
             aria-invalid={!!errors.distance || undefined}
             className="h-10 pr-12 text-sm"
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">km</span>
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">{t.distanceUnit}</span>
         </div>
         {errors.distance && <p className="text-xs text-destructive">{errMsg(errors.distance)}</p>}
       </div>
@@ -148,9 +148,9 @@ function MaintenanceCostForm({ lang }: { lang: Lang }) {
               setValues((v) => ({ ...v, efficiency: e.target.value }))
               if (errors.efficiency) setErrors((er) => ({ ...er, efficiency: undefined }))
             }}
-            placeholder={lang === 'en' ? 'e.g. 12' : '예: 12'}
+            placeholder={t.efficiencyPlaceholder}
             min="0"
-            step="0.1"
+            step={t.efficiencyStep}
             aria-invalid={!!errors.efficiency || undefined}
             className="h-10 pr-20 text-sm"
           />
@@ -169,12 +169,12 @@ function MaintenanceCostForm({ lang }: { lang: Lang }) {
             type="number"
             value={values.insurance}
             onChange={(e) => setValues((v) => ({ ...v, insurance: e.target.value }))}
-            placeholder={lang === 'en' ? 'e.g. 80000' : '예: 80000'}
+            placeholder={t.insurancePlaceholder}
             min="0"
-            step="1000"
+            step={t.insuranceStep}
             className="h-10 pr-8 text-sm"
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">₩</span>
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">{t.insuranceCurrency}</span>
         </div>
       </div>
 
