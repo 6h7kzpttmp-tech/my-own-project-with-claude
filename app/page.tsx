@@ -319,8 +319,117 @@ function AppTabs() {
           <div className="absolute top-4 right-4">
             <LangSwitch lang={lang} onChange={switchLang} />
           </div>
-          <div className="text-5xl mb-2">🚗</div>
-          <CardTitle className="text-2xl font-bold">{t.title}</CardTitle>
+          {/* Ferrari F1 Car Icon */}
+          <div className="flex justify-center mb-3">
+            <svg viewBox="0 0 240 82" width="150" height="51" aria-label="Ferrari F1 car" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="ferrariRed" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#FF2400"/>
+                  <stop offset="100%" stopColor="#C00000"/>
+                </linearGradient>
+                <linearGradient id="ferrariRedDark" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#CC1800"/>
+                  <stop offset="100%" stopColor="#8B0000"/>
+                </linearGradient>
+                <radialGradient id="tireGrad" cx="35%" cy="30%" r="65%">
+                  <stop offset="0%" stopColor="#4a4a4a"/>
+                  <stop offset="100%" stopColor="#0f0f0f"/>
+                </radialGradient>
+              </defs>
+
+              {/* ── Rear Wing ── */}
+              {/* End plates */}
+              <rect x="6"  y="8" width="4" height="36" rx="1.5" fill="#111"/>
+              <rect x="25" y="8" width="4" height="36" rx="1.5" fill="#111"/>
+              {/* Main plane */}
+              <rect x="5" y="8"  width="25" height="5.5" rx="2" fill="url(#ferrariRed)"/>
+              {/* DRS flap */}
+              <rect x="5" y="16" width="25" height="3.5" rx="1.5" fill="url(#ferrariRed)" opacity="0.85"/>
+              {/* White SF stripe on wing */}
+              <rect x="5" y="8" width="25" height="1.5" rx="1" fill="#fff" opacity="0.4"/>
+              {/* Pillar */}
+              <rect x="14" y="21" width="5" height="21" rx="1.5" fill="#1a1a1a"/>
+
+              {/* ── Main Body ── */}
+              <path d="
+                M 32,65 L 32,40
+                Q 37,24 58,19
+                L 88,19 L 132,19
+                Q 152,21 166,29
+                Q 182,38 194,50
+                Q 202,57 206,63
+                L 206,65
+                Q 188,68 165,67
+                L 50,67
+                Q 38,67 32,65 Z
+              " fill="url(#ferrariRed)"/>
+
+              {/* Sidepod undercut shadow */}
+              <path d="M 62,67 L 62,58 Q 76,53 96,53 L 155,53 Q 168,54 176,59 L 176,67 Z"
+                fill="url(#ferrariRedDark)" opacity="0.55"/>
+
+              {/* ── Yellow SF Scuderia stripe ── */}
+              <path d="M 35,46 L 88,46 L 88,50 L 35,50 Z" fill="#FFE600"/>
+              <path d="M 133,46 L 164,49 L 164,53 L 133,50 Z" fill="#FFE600"/>
+
+              {/* ── Air intake / engine cover inlet ── */}
+              <path d="M 58,19 L 88,19 L 88,14 Q 73,11 58,14 Z" fill="#0a0a14"/>
+
+              {/* ── Cockpit opening ── */}
+              <path d="M 88,19 L 100,33 L 124,33 L 136,19 Z" fill="#080814"/>
+
+              {/* ── Halo ── */}
+              <path d="M 86,21 Q 112,4 138,21"
+                stroke="#2a2a2a" strokeWidth="6" fill="none" strokeLinecap="round"/>
+              <path d="M 86,21 Q 112,4 138,21"
+                stroke="#707070" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+              {/* Halo center pillar */}
+              <rect x="109" y="4" width="5" height="17" rx="2" fill="#2a2a2a"/>
+              <rect x="110" y="5" width="3" height="15" rx="1.5" fill="#606060"/>
+
+              {/* ── Nose cone ── */}
+              <path d="M 194,50 Q 205,57 208,63 L 208,67 L 194,67 Q 186,60 180,50 Z"
+                fill="url(#ferrariRedDark)"/>
+
+              {/* ── Front Wing — 3 elements ── */}
+              {/* Upper cascade */}
+              <path d="M 194,52 L 230,50 L 230,53 L 194,55 Z" fill="url(#ferrariRed)" opacity="0.7"/>
+              {/* Mid element */}
+              <path d="M 190,56 L 234,54 L 234,58 L 190,60 Z" fill="url(#ferrariRed)" opacity="0.85"/>
+              {/* Main plane */}
+              <path d="M 188,60 L 236,58 L 236,65 L 186,67 Z" fill="url(#ferrariRed)"/>
+              {/* White stripe on main plane */}
+              <path d="M 188,60 L 236,58 L 236,60 L 188,62 Z" fill="#fff" opacity="0.2"/>
+              {/* Endplate */}
+              <rect x="234" y="49" width="4.5" height="19" rx="1.5" fill="#111"/>
+              {/* Nose-to-wing join */}
+              <path d="M 207,62 L 235,59 L 235,66 L 207,67 Z" fill="url(#ferrariRedDark)"/>
+
+              {/* ── Rear Tyre ── */}
+              <circle cx="44"  cy="66" r="17" fill="url(#tireGrad)"/>
+              <circle cx="44"  cy="66" r="9"  fill="#111"/>
+              <circle cx="44"  cy="66" r="3.5" fill="#333"/>
+              <circle cx="44"  cy="66" r="15" fill="none" stroke="#282828" strokeWidth="1"/>
+              <path d="M 35,56 A 12,12 0 0 1 53,56" stroke="#555" strokeWidth="1.2" fill="none"/>
+
+              {/* ── Front Tyre ── */}
+              <circle cx="198" cy="66" r="14" fill="url(#tireGrad)"/>
+              <circle cx="198" cy="66" r="7.5" fill="#111"/>
+              <circle cx="198" cy="66" r="3"   fill="#333"/>
+              <circle cx="198" cy="66" r="12" fill="none" stroke="#282828" strokeWidth="1"/>
+              <path d="M 190,57 A 10,10 0 0 1 206,57" stroke="#555" strokeWidth="1.2" fill="none"/>
+
+              {/* ── Wishbone suspension ── */}
+              <line x1="44"  y1="52" x2="56"  y2="44" stroke="#3a3a3a" strokeWidth="1.5"/>
+              <line x1="44"  y1="52" x2="36"  y2="44" stroke="#3a3a3a" strokeWidth="1.5"/>
+              <line x1="198" y1="54" x2="186" y2="46" stroke="#3a3a3a" strokeWidth="1.5"/>
+              <line x1="198" y1="54" x2="210" y2="49" stroke="#3a3a3a" strokeWidth="1.5"/>
+
+              {/* ── Ground shadow ── */}
+              <ellipse cx="119" cy="81" rx="94" ry="5" fill="#000" opacity="0.18"/>
+            </svg>
+          </div>
+          <CardTitle className="text-3xl font-bold tracking-wider" style={{ fontFamily: 'var(--font-racing)' }}>{t.title}</CardTitle>
           <CardDescription className="text-sm">{t.subtitle}</CardDescription>
         </CardHeader>
 
