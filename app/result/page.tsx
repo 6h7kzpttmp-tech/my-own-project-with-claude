@@ -135,6 +135,13 @@ export default async function ResultPage({ searchParams }: Props) {
           </div>
 
           <Link
+            href={`/repair-shop?lang=${lang}`}
+            className={cn(buttonVariants({ variant: 'default' }), 'w-full h-11 text-sm justify-center')}
+          >
+            {t.findShop}
+          </Link>
+
+          <Link
             href={`/?${backParams.toString()}`}
             className={cn(buttonVariants({ variant: 'outline' }), 'w-full h-11 text-sm justify-center')}
           >
