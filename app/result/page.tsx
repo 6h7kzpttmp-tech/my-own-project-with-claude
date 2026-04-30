@@ -34,13 +34,12 @@ export default async function ResultPage({ searchParams }: Props) {
 
   const fmt = (n: number) => formatAmount(n, lang)
 
-  const backParams = new URLSearchParams({
-    carType, distance: String(rawDistance), efficiency: String(rawEfficiency),
-    fuelType, insurance: String(rawInsurance), lang,
-  })
+  // 다시 계산하기: 입력값 초기화, 언어만 유지
+  const backParams = new URLSearchParams({ lang })
 
   const toggleLangParams = new URLSearchParams({
-    ...Object.fromEntries(backParams),
+    carType, distance: String(rawDistance), efficiency: String(rawEfficiency),
+    fuelType, insurance: String(rawInsurance),
     lang: lang === 'ko' ? 'en' : 'ko',
   })
 
@@ -134,6 +133,13 @@ export default async function ResultPage({ searchParams }: Props) {
               {fmt(result.monthlyTotal)} × {t.months}
             </p>
           </div>
+
+          <Link
+            href={`/repair-shop?lang=${lang}`}
+            className={cn(buttonVariants({ variant: 'default' }), 'w-full h-11 text-sm justify-center')}
+          >
+            {t.findShop}
+          </Link>
 
           <Link
             href={`/?${backParams.toString()}`}
