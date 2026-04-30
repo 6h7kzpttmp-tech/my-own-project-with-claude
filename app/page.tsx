@@ -319,8 +319,54 @@ function AppTabs() {
           <div className="absolute top-4 right-4">
             <LangSwitch lang={lang} onChange={switchLang} />
           </div>
-          <div className="text-5xl mb-2">🚗</div>
-          <CardTitle className="text-2xl font-bold">{t.title}</CardTitle>
+          {/* F1 Car Icon */}
+          <div className="flex justify-center mb-3">
+            <svg viewBox="0 0 140 50" width="112" height="40" aria-label="Formula 1 car" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Rear wing — T-bar */}
+              <rect x="3" y="7" width="18" height="3.5" rx="1.5" fill="#d97706"/>
+              <rect x="3" y="11" width="18" height="2" rx="1" fill="#d97706" opacity="0.6"/>
+              <rect x="9" y="7" width="5" height="20" rx="1.5" fill="#d97706"/>
+              {/* Body */}
+              <path d="M20,38 L20,22 Q24,13 40,11 L85,11 Q104,11 112,19 L116,19 L118,23 L118,38 Z" fill="#1e3a5a"/>
+              {/* Body highlight stripe */}
+              <path d="M40,11 L85,11 L85,14 L40,14 Z" fill="#d97706" opacity="0.8"/>
+              {/* Sidepod air inlet */}
+              <path d="M50,11 Q52,15 52,20 L44,20 Q44,15 46,11 Z" fill="#0f1e2e"/>
+              {/* Cockpit opening */}
+              <ellipse cx="68" cy="13" rx="15" ry="7" fill="#07111f"/>
+              {/* Halo safety device */}
+              <path d="M56,14 Q68,3 80,14" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round"/>
+              {/* Driver helmet hint */}
+              <ellipse cx="68" cy="11" rx="6" ry="5" fill="#1e3a5a"/>
+              <ellipse cx="68" cy="11" rx="5" ry="4" fill="#d97706" opacity="0.4"/>
+              {/* Front wing */}
+              <path d="M112,32 L120,32 L122,35 L122,40 L112,40 L110,36 Z" fill="#1e3a5a"/>
+              <rect x="121" y="30" width="2.5" height="12" rx="1" fill="#1e3a5a"/>
+              {/* Front wing endplate */}
+              <rect x="121" y="29" width="16" height="3" rx="1.5" fill="#d97706"/>
+              <rect x="121" y="34" width="16" height="2" rx="1" fill="#d97706" opacity="0.6"/>
+              {/* Rear wheel */}
+              <circle cx="28" cy="38" r="11" fill="#111827"/>
+              <circle cx="28" cy="38" r="5.5" fill="#374151"/>
+              <circle cx="28" cy="38" r="2" fill="#111827"/>
+              {/* Rear wheel highlight */}
+              <path d="M22,32 A8,8 0 0 1 34,32" stroke="#4b5563" strokeWidth="1.5" fill="none"/>
+              {/* Front wheel */}
+              <circle cx="110" cy="38" r="10" fill="#111827"/>
+              <circle cx="110" cy="38" r="5" fill="#374151"/>
+              <circle cx="110" cy="38" r="2" fill="#111827"/>
+              {/* Front wheel highlight */}
+              <path d="M104,32 A7,7 0 0 1 116,32" stroke="#4b5563" strokeWidth="1.5" fill="none"/>
+              {/* Suspension rods */}
+              <line x1="28" y1="29" x2="36" y2="22" stroke="#4b5563" strokeWidth="1.2"/>
+              <line x1="28" y1="29" x2="20" y2="22" stroke="#4b5563" strokeWidth="1.2"/>
+              <line x1="110" y1="30" x2="105" y2="22" stroke="#4b5563" strokeWidth="1.2"/>
+              <line x1="110" y1="30" x2="116" y2="23" stroke="#4b5563" strokeWidth="1.2"/>
+              {/* Ground effect / diffuser */}
+              <path d="M20,38 L118,38 L118,40 L20,40 Z" fill="#0f1e2e" opacity="0.5"/>
+            </svg>
+          </div>
+          <CardTitle className="text-3xl font-bold tracking-wider" style={{ fontFamily: 'var(--font-racing)' }}>{t.title}</CardTitle>
           <CardDescription className="text-sm">{t.subtitle}</CardDescription>
         </CardHeader>
 
