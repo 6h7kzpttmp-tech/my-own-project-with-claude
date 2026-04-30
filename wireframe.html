@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wireframe — 내 차 유지비 계산기</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      padding: 32px 16px;
+    }
+
+    h1.page-title {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #666;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+    }
+
+    .screens {
+      display: flex;
+      gap: 48px;
+      justify-content: center;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .screen-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .screen-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #888;
+    }
+
+    /* ── 카드 공통 ── */
+    .card {
+      width: 360px;
+      background: #fff;
+      border-radius: 16px;
+      border: 1.5px solid #d1d5db;
+      padding: 28px 24px 24px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    }
+
+    /* ── 헤더 ── */
+    .card-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .card-header .icon {
+      font-size: 40px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .card-header h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111;
+    }
+    .card-header p {
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    /* ── 폼 필드 ── */
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+    .field label .optional {
+      font-weight: 400;
+      color: #aaa;
+    }
+
+    /* 토글 버튼 그룹 */
+    .toggle-group {
+      display: flex;
+      gap: 6px;
+    }
+    .toggle-group.cols-5 { }
+    .toggle-group.cols-3 { }
+
+    .toggle-btn {
+      flex: 1;
+      padding: 7px 4px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 12px;
+      color: #555;
+      text-align: center;
+      cursor: pointer;
+    }
+    .toggle-btn.selected {
+      background: #d4a017;
+      border-color: #d4a017;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* 텍스트 입력 */
+    .input-wrap { position: relative; }
+    .input-wrap input {
+      width: 100%;
+      height: 40px;
+      padding: 0 48px 0 12px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #111;
+      background: #fafafa;
+      outline: none;
+    }
+    .input-wrap input::placeholder { color: #bbb; }
+    .input-wrap input.error { border-color: #ef4444; background: #fef2f2; }
+    .input-wrap .unit {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px;
+      color: #aaa;
+    }
+    .error-msg {
+      font-size: 11px;
+      color: #ef4444;
+      margin-top: 4px;
+    }
+
+    /* 제출 버튼 */
+    .submit-btn {
+      width: 100%;
+      height: 44px;
+      background: #d4a017;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    /* ── 결과 페이지 ── */
+    .result-banner {
+      background: #d4a017;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .result-banner .label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 4px;
+    }
+    .result-banner .amount {
+      font-size: 30px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .result-banner .annual {
+      font-size: 11px;
+      color: rgba(255,255,255,0.75);
+      margin-top: 6px;
+    }
+
+    .breakdown { margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .breakdown-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f3f4f6;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .breakdown-item .left { display: flex; align-items: center; gap: 10px; }
+    .breakdown-item .item-icon { font-size: 18px; }
+    .breakdown-item .item-name { font-size: 12px; font-weight: 600; color: #222; }
+    .breakdown-item .item-desc { font-size: 10px; color: #999; margin-top: 1px; }
+    .breakdown-item .item-value { font-size: 13px; font-weight: 700; color: #222; }
+
+    .annual-card {
+      background: #fef9ec;
+      border: 1.5px solid #f0d070;
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .annual-card .left { display: flex; align-items: center; gap: 8px; }
+    .annual-card .left .icon { font-size: 16px; }
+    .annual-card .left .text { font-size: 12px; font-weight: 600; color: #7a5c00; }
+    .annual-card .value { font-size: 13px; font-weight: 800; color: #b8860b; }
+    .annual-card .sub { font-size: 10px; color: #a08020; margin-top: 2px; }
+
+    .back-btn {
+      width: 100%;
+      height: 44px;
+      background: #fff;
+      color: #444;
+      border: 1.5px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ── 어노테이션 ── */
+    .annotations {
+      margin-top: 16px;
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: 10px;
+      padding: 14px 16px;
+      width: 360px;
+    }
+    .annotations h3 {
+      font-size: 11px;
+      font-weight: 700;
+      color: #92400e;
+      margin-bottom: 8px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .annotations ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .annotations li {
+      font-size: 11px;
+      color: #78350f;
+      padding-left: 14px;
+      position: relative;
+    }
+    .annotations li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #d97706;
+    }
+
+    /* ── 플로우 화살표 ── */
+    .flow-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 80px;
+      color: #aaa;
+      font-size: 28px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="page-title">Wireframe — 내 차 유지비 계산기</h1>
+
+  <div class="screens">
+
+    <!-- ══════════ PAGE 1: 입력 ══════════ -->
+    <div class="screen-wrap">
+      <span class="screen-label">Page 1 · 입력 (/)</span>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="icon">🚗</div>
+          <h2>내 차 유지비 계산기</h2>
+          <p>월간·연간 유지비를 쉽게 계산해보세요</p>
+        </div>
+
+        <!-- 차종 -->
+        <div class="field">
+          <label>차종</label>
+          <div class="toggle-group cols-5">
+            <div class="toggle-btn">경차</div>
+            <div class="toggle-btn">소형</div>
+            <div class="toggle-btn selected">중형</div>
+            <div class="toggle-btn">SUV</div>
+            <div class="toggle-btn">대형</div>
+          </div>
+        </div>
+
+        <!-- 유류 종류 -->
+        <div class="field">
+          <label>유류 종류</label>
+          <div class="toggle-group cols-3">
+            <div class="toggle-btn selected">휘발유</div>
+            <div class="toggle-btn">경유</div>
+            <div class="toggle-btn">전기</div>
+          </div>
+        </div>
+
+        <!-- 주행거리 -->
+        <div class="field">
+          <label>월 평균 주행거리</label>
+          <div class="input-wrap">
+            <input type="number" placeholder="예: 1500" />
+            <span class="unit">km</span>
+          </div>
+        </div>
+
+        <!-- 연비 -->
+        <div class="field">
+          <label>연비</label>
+          <div class="input-wrap">
+            <input type="number" placeholder="예: 12" />
+            <span class="unit">km/L</span>
+          </div>
+        </div>
+
+        <!-- 보험료 -->
+        <div class="field">
+          <label>월 보험료 <span class="optional">(선택)</span></label>
+          <div class="input-wrap">
+            <input type="number" placeholder="예: 80000" />
+            <span class="unit">원</span>
+          </div>
+        </div>
+
+        <button class="submit-btn">계산하기</button>
+      </div>
+
+      <!-- 어노테이션 -->
+      <div class="annotations">
+        <h3>Notes</h3>
+        <ul>
+          <li>차종/유류 토글 → 선택 시 primary(골드) 강조</li>
+          <li>유류=전기 선택 시 연비 단위 km/L → km/kWh 자동 전환</li>
+          <li>주행거리 step=100 / 연비 step=0.1 / 보험 step=1000</li>
+          <li>필수 미입력 → 빨간 테두리 + 오류 메시지</li>
+          <li>계산 → URL 파라미터로 /result 이동</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 화살표 -->
+    <div class="flow-arrow">→</div>
+
+    <!-- ══════════ PAGE 2: 결과 ══════════ -->
+    <div class="screen-wrap">
+      <span class="screen-label">Page 2 · 결과 (/result)</span>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="icon">📊</div>
+          <h2>유지비 계산 결과</h2>
+          <p>중형 · 휘발유</p>
+        </div>
+
+        <!-- 월간 합계 배너 -->
+        <div class="result-banner">
+          <div class="label">월간 유지비 합계</div>
+          <div class="amount">32만 6,250원</div>
+          <div class="annual">연간 391만 5,000원</div>
+        </div>
+
+        <!-- 항목별 breakdown -->
+        <div class="breakdown">
+          <div class="breakdown-item">
+            <div class="left">
+              <span class="item-icon">⛽</span>
+              <div>
+                <div class="item-name">주유비</div>
+                <div class="item-desc">1500km ÷ 12km/L × 1,650원/L</div>
+              </div>
+            </div>
+            <div class="item-value">20만 6,250원</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="left">
+              <span class="item-icon">🛡️</span>
+              <div>
+                <div class="item-name">보험료</div>
+                <div class="item-desc">입력하신 월 보험료</div>
+              </div>
+            </div>
+            <div class="item-value">8만원</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="left">
+              <span class="item-icon">🔧</span>
+              <div>
+                <div class="item-name">정기점검비</div>
+                <div class="item-desc">중형 기준 추정값</div>
+              </div>
+            </div>
+            <div class="item-value">4만원</div>
+          </div>
+        </div>
+
+        <!-- 연간 환산 -->
+        <div class="annual-card">
+          <div class="left">
+            <span class="icon">📅</span>
+            <div>
+              <div class="text">연간 유지비</div>
+              <div class="sub">월 32만 6,250원 × 12개월</div>
+            </div>
+          </div>
+          <div class="value">391만 5,000원</div>
+        </div>
+
+        <button class="back-btn">다시 계산하기</button>
+      </div>
+
+      <!-- 어노테이션 -->
+      <div class="annotations">
+        <h3>Notes</h3>
+        <ul>
+          <li>배너: bg-primary(골드) / 텍스트 흰색</li>
+          <li>breakdown: bg-muted(연회색) 카드</li>
+          <li>연간 카드: primary/10 배경 + primary/20 테두리</li>
+          <li>다시 계산하기: outline 버튼, URL 파라미터 유지</li>
+          <li>서버 컴포넌트 (searchParams async await)</li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /screens -->
+
+  <!-- ── 유효성 검사 상태 ── -->
+  <div style="margin-top:56px; max-width:800px; margin-left:auto; margin-right:auto;">
+    <h1 class="page-title" style="margin-bottom:20px;">Validation States</h1>
+    <div style="display:flex; gap:32px; flex-wrap:wrap; justify-content:center;">
+
+      <!-- 오류 상태 -->
+      <div class="screen-wrap">
+        <span class="screen-label">S4 · 필수 미입력</span>
+        <div class="card" style="padding:20px;">
+          <div class="field">
+            <label>월 평균 주행거리</label>
+            <div class="input-wrap">
+              <input class="error" type="number" placeholder="예: 1500" />
+              <span class="unit">km</span>
+            </div>
+            <div class="error-msg">필수 입력값입니다</div>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>연비</label>
+            <div class="input-wrap">
+              <input class="error" type="number" value="0" />
+              <span class="unit">km/L</span>
+            </div>
+            <div class="error-msg">1 이상의 값을 입력해주세요</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
